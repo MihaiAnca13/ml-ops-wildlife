@@ -156,3 +156,7 @@ cython_debug/
 
 # PyCharm
 .idea/
+
+# Data
+data/WAID/images
+data/WAID/labels
