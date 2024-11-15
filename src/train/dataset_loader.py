@@ -2,6 +2,7 @@ from torch.utils.data import Dataset
 from PIL import Image
 from enum import Enum
 import pathlib
+from tqdm import tqdm
 
 
 class DatasetMode(str, Enum):
@@ -29,7 +30,9 @@ class ObjectDetectionDataset(Dataset):
 
     def load_labels(self):
         labels = {}
-        for image_file in self.image_files:
+        for image_file in tqdm(
+            self.image_files, desc="Loading labels", total=len(self.image_files)
+        ):
             image_file = pathlib.Path(image_file)
             label_file = self.data_dir / "labels" / self.mode / f"{image_file.stem}.txt"
             with open(label_file, "r") as f:
@@ -56,7 +59,7 @@ class ObjectDetectionDataset(Dataset):
 if __name__ == "__main__":
     # Example usage
     data_dir = "D:\\Projects\\ml-ops-wildlife\\data\\WAID"
-    dataset = ObjectDetectionDataset(data_dir, DatasetMode.TEST)
+    dataset = ObjectDetectionDataset(data_dir, DatasetMode.TRAIN)
     print(len(dataset))
     print(dataset[0])
 
