@@ -1,0 +1,17 @@
+# C:\Users\Mihai\AppData\Local\pypoetry\Cache\virtualenvs\ml-ops-wildlife-FX4-Cvpr-py3.12\Scripts\python.exe .\train.py --img 640 --epochs 3 --data yolo_data.yml --weights yolov5s.pt
+
+path: ./data/WAID # dataset root dir
+train: images/train
+val: images/valid
+test: images/test
+
+# Number of classes
+nc: 6
+
+names:
+  0: sheep
+  1: cattle
+  2: seal
+  3: camelus
+  4: kiang
+  5: zebra
