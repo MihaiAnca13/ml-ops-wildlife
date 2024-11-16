@@ -3,6 +3,7 @@ from PIL import Image
 from enum import Enum
 import pathlib
 from tqdm import tqdm
+import torch
 
 
 class DatasetMode(str, Enum):
@@ -38,8 +39,14 @@ class ObjectDetectionDataset(Dataset):
             with open(label_file, "r") as f:
                 label = f.readlines()
             label = [l.strip().split() for l in label]
-            class_id, bbox = int(label[0][0]), [float(x) for x in label[0][1:]]
-            labels[label_file.stem] = (class_id, bbox)
+            class_ids = []
+            bboxes = []
+            for l in label:
+                class_id = int(l[0])
+                bbox = [float(x) for x in l[1:]]
+                class_ids.append(class_id)
+                bboxes.append(bbox)
+            labels[label_file.stem] = (class_ids, bboxes)
         return labels
 
     def __len__(self):
@@ -49,20 +56,39 @@ class ObjectDetectionDataset(Dataset):
     def __getitem__(self, idx):
         image_file = self.image_files[idx]
         image_file = pathlib.Path(image_file)
-        image = Image.open(image_file)
+        image = Image.open(image_file).resize((640, 640))
         class_id, bbox = self.labels[image_file.stem]
         if self.transform:
             image = self.transform(image)
         return image, class_id, bbox
 
 
+def simple_collate_fn(batch):
+    images, labels, bboxes = zip(*batch)  # unzip the batch
+    images = torch.stack(images, 0)
+    # labels and bboxes are left as lists since they can have different sizes
+    return images, labels, bboxes
+
+
 if __name__ == "__main__":
+    from torchvision import transforms
+
     # Example usage
     data_dir = "D:\\Projects\\ml-ops-wildlife\\data\\WAID"
-    dataset = ObjectDetectionDataset(data_dir, DatasetMode.TRAIN)
+    dataset = ObjectDetectionDataset(
+        data_dir, DatasetMode.TEST, transform=transforms.ToTensor()
+    )
     print(len(dataset))
-    print(dataset[0])
+
+    print(dataset[158][0].shape)
+
+    for i in range(len(dataset)):
+        assert dataset[i][0].shape == torch.Size([3, 640, 640]), f"Error at index {i}"
 
     # from torch.utils.data import DataLoader
 
-    # dataloader = DataLoader(dataset, batch_size=32, shuffle=True, num_workers=4)
+    # dataloader = DataLoader(dataset, batch_size=2, shuffle=False, num_workers=1, collate_fn=simple_collate_fn)
+    #
+    # for x in dataloader:
+    #     print(x)
+    #     break
