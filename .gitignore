@@ -163,3 +163,6 @@ data/WAID/labels
 
 # DVC
 %TEMP%
+
+# yolo
+runs/

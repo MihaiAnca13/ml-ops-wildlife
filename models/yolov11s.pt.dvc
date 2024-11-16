@@ -1,0 +1,5 @@
+outs:
+- md5: fada8425567d22f86b70c46a64951433
+  size: 19174035
+  hash: md5
+  path: yolov11s.pt
