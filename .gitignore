@@ -160,3 +160,6 @@ cython_debug/
 # Data
 data/WAID/images
 data/WAID/labels
+
+# DVC
+%TEMP%
