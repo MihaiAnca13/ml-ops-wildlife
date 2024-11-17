@@ -35,7 +35,7 @@ def prepare_targets(bboxes, class_ids, image_size, device):
                 * image_size
             )
             scaled_bboxes.append(scaled_box)
-            labels.append(label)
+            labels.append(label + 1)  # Add 1 to class_id to account for background
 
         # Convert to Tensors
         scaled_bboxes = torch.stack(scaled_bboxes).to(device)
@@ -58,7 +58,7 @@ def train_retina(
     )
 
     # set model output to 7 classes (6 classes + 1 background)
-    num_classes = 6
+    num_classes = 7
     in_features = model.backbone.out_channels
     num_anchors = model.anchor_generator.num_anchors_per_location()[0]
     model.head = RetinaNetHead(
@@ -142,4 +142,4 @@ if __name__ == "__main__":
         )
 
     # Save the mode
-    torch.save(trained_model.state_dict(), "../../models/retina.pt")
+    torch.save(trained_model, "../../models/retina.pt")
