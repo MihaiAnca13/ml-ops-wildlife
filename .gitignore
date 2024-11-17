@@ -161,6 +161,9 @@ cython_debug/
 data/WAID/images
 data/WAID/labels
 
+# Runs
+src/train/mlruns
+
 # DVC
 %TEMP%
 
