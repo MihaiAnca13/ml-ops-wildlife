@@ -30,7 +30,12 @@ def prepare_targets(bboxes, class_ids, image_size, device):
             # Scale and convert to [x_min, y_min, x_max, y_max]
             scaled_box = (
                 torch.tensor(
-                    [x_min, y_min, x_min + max(width, 1), y_min + max(height, 1)]
+                    [
+                        x_min,
+                        y_min,
+                        x_min + max(width, 1 / image_size),
+                        y_min + max(height, 1 / image_size),
+                    ]
                 )
                 * image_size
             )
